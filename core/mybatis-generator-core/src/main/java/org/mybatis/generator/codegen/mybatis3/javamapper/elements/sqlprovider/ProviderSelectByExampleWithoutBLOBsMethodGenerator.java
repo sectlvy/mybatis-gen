@@ -114,7 +114,7 @@ public class ProviderSelectByExampleWithoutBLOBsMethodGenerator extends
         	method.addBodyLine("return SQL();"); //$NON-NLS-1$
         } else {
         	method.addBodyLine(" String sqlStr = sql.toString();");
-             //#lkl
+             //#sect
         	method.addBodyLine("if(example.getPage()!=null){"); 
         	method.addBodyLine("sqlStr = sqlStr+\" limit \"+example.getPage().getOffset()+\",\"+example.getPage().getLimit()+\"\";"); 
         	method.addBodyLine(" }"); 

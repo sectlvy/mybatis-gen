@@ -86,26 +86,26 @@ public class ConfigurationParser {
 
         FileReader fr = new FileReader(inputFile);
 
-        return parseConfiguration(fr);
+        return parseConfiguration(fr,inputFile.getAbsolutePath());
     }
 
-    public Configuration parseConfiguration(Reader reader) throws IOException,
+    public Configuration parseConfiguration(Reader reader,String confPath) throws IOException,
             XMLParserException {
 
         InputSource is = new InputSource(reader);
 
-        return parseConfiguration(is);
+        return parseConfiguration(is,confPath);
     }
 
-    public Configuration parseConfiguration(InputStream inputStream)
+    public Configuration parseConfiguration(InputStream inputStream,String path)
             throws IOException, XMLParserException {
 
         InputSource is = new InputSource(inputStream);
 
-        return parseConfiguration(is);
+        return parseConfiguration(is,path);
     }
 
-    private Configuration parseConfiguration(InputSource inputSource)
+    private Configuration parseConfiguration(InputSource inputSource,String path)
             throws IOException, XMLParserException {
         parseErrors.clear();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -146,7 +146,7 @@ public class ConfigurationParser {
             } else if (rootNode.getNodeType() == Node.ELEMENT_NODE
                     && docType.getPublicId().equals(
                             XmlConstants.MYBATIS_GENERATOR_CONFIG_PUBLIC_ID)) {
-                config = parseMyBatisGeneratorConfiguration(rootNode);
+                config = parseMyBatisGeneratorConfiguration(rootNode,path);
             } else {
                 throw new XMLParserException(getString("RuntimeError.5")); //$NON-NLS-1$
             }
@@ -169,10 +169,10 @@ public class ConfigurationParser {
         return parser.parseIbatorConfiguration(rootNode);
     }
 
-    private Configuration parseMyBatisGeneratorConfiguration(Element rootNode)
+    private Configuration parseMyBatisGeneratorConfiguration(Element rootNode,String path)
             throws XMLParserException {
         MyBatisGeneratorConfigurationParser parser = new MyBatisGeneratorConfigurationParser(
                 properties);
-        return parser.parseConfiguration(rootNode);
+        return parser.parseConfiguration(rootNode,path);
     }
 }

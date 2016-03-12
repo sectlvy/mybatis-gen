@@ -32,6 +32,7 @@ import static org.mybatis.generator.internal.util.StringUtility.isTrue;
 import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
 import static org.mybatis.generator.internal.util.messages.Messages.getString;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -77,7 +78,7 @@ public class MyBatisGeneratorConfigurationParser {
         }
     }
 
-    public Configuration parseConfiguration(Element rootNode)
+    public Configuration parseConfiguration(Element rootNode,String path)
             throws XMLParserException {
 
         Configuration configuration = new Configuration();
@@ -95,7 +96,7 @@ public class MyBatisGeneratorConfigurationParser {
             } else if ("classPathEntry".equals(childNode.getNodeName())) { //$NON-NLS-1$
                 parseClassPathEntry(configuration, childNode);
             } else if ("context".equals(childNode.getNodeName())) { //$NON-NLS-1$
-                parseContext(configuration, childNode);
+                parseContext(configuration, childNode,path);
             }
         }
 
@@ -147,7 +148,7 @@ public class MyBatisGeneratorConfigurationParser {
         }
     }
 
-    private void parseContext(Configuration configuration, Node node) {
+    private void parseContext(Configuration configuration, Node node,String path) {
 
         Properties attributes = parseAttributes(node);
         String defaultModelType = attributes.getProperty("defaultModelType"); //$NON-NLS-1$
@@ -187,7 +188,7 @@ public class MyBatisGeneratorConfigurationParser {
             } else if ("jdbcConnection".equals(childNode.getNodeName())) { //$NON-NLS-1$
                 parseJdbcConnection(context, childNode);
             } else if ("javaModelGenerator".equals(childNode.getNodeName())) { //$NON-NLS-1$
-                parseJavaModelGenerator(context, childNode);
+                parseJavaModelGenerator(context, childNode,path);
             } else if ("javaTypeResolver".equals(childNode.getNodeName())) { //$NON-NLS-1$
                 parseJavaTypeResolver(context, childNode);
             } else if ("sqlMapGenerator".equals(childNode.getNodeName())) { //$NON-NLS-1$
@@ -209,6 +210,7 @@ public class MyBatisGeneratorConfigurationParser {
         String targetPackage = attributes.getProperty("targetPackage"); //$NON-NLS-1$
         String targetProject = attributes.getProperty("targetProject"); //$NON-NLS-1$
 
+        //modify by sect
         sqlMapGeneratorConfiguration.setTargetPackage(targetPackage);
         sqlMapGeneratorConfiguration.setTargetProject(targetProject);
 
@@ -509,7 +511,7 @@ public class MyBatisGeneratorConfigurationParser {
         }
     }
 
-    private void parseJavaModelGenerator(Context context, Node node) {
+    private void parseJavaModelGenerator(Context context, Node node,String path) {
         JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
 
         context
@@ -519,6 +521,12 @@ public class MyBatisGeneratorConfigurationParser {
         String targetPackage = attributes.getProperty("targetPackage"); //$NON-NLS-1$
         String targetProject = attributes.getProperty("targetProject"); //$NON-NLS-1$
 
+        if(path!=null &&  path.indexOf("gengrate")>0){
+        	//F:\dev\hbc\svn\trade\trunk\trade-biz\src\main\java
+        	//F:\dev\hbc\svn\trade\trunk\trade-biz\gengrate\tradeconfig.xml
+        	
+        	targetProject = path.substring(0, path.indexOf("gengrate"))+File.separator+"src"+File.separator+"main"+File.separator+"java";
+        }
         javaModelGeneratorConfiguration.setTargetPackage(targetPackage);
         javaModelGeneratorConfiguration.setTargetProject(targetProject);
 
