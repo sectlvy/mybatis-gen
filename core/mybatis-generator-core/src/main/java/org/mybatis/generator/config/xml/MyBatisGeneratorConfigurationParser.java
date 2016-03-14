@@ -192,16 +192,16 @@ public class MyBatisGeneratorConfigurationParser {
             } else if ("javaTypeResolver".equals(childNode.getNodeName())) { //$NON-NLS-1$
                 parseJavaTypeResolver(context, childNode);
             } else if ("sqlMapGenerator".equals(childNode.getNodeName())) { //$NON-NLS-1$
-                parseSqlMapGenerator(context, childNode);
+                parseSqlMapGenerator(context, childNode,path);
             } else if ("javaClientGenerator".equals(childNode.getNodeName())) { //$NON-NLS-1$
-                parseJavaClientGenerator(context, childNode);
+                parseJavaClientGenerator(context, childNode,path);
             } else if ("table".equals(childNode.getNodeName())) { //$NON-NLS-1$
                 parseTable(context, childNode);
             }
         }
     }
 
-    private void parseSqlMapGenerator(Context context, Node node) {
+    private void parseSqlMapGenerator(Context context, Node node,String path) {
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
 
         context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
@@ -209,6 +209,7 @@ public class MyBatisGeneratorConfigurationParser {
         Properties attributes = parseAttributes(node);
         String targetPackage = attributes.getProperty("targetPackage"); //$NON-NLS-1$
         String targetProject = attributes.getProperty("targetProject"); //$NON-NLS-1$
+        targetProject = getTargetPath(path,targetProject);
 
         //modify by sect
         sqlMapGeneratorConfiguration.setTargetPackage(targetPackage);
@@ -511,6 +512,15 @@ public class MyBatisGeneratorConfigurationParser {
         }
     }
 
+    private String getTargetPath(String path,String targetPackageSource){
+    	if(path!=null &&  path.indexOf("gengrate")>0){
+        	//F:\dev\hbc\svn\trade\trunk\trade-biz\src\main\java
+        	//F:\dev\hbc\svn\trade\trunk\trade-biz\gengrate\tradeconfig.xml
+        	
+    		return path.substring(0, path.indexOf("gengrate"))+File.separator+"src"+File.separator+"main"+File.separator+"java";
+        }
+    	return targetPackageSource;
+    }
     private void parseJavaModelGenerator(Context context, Node node,String path) {
         JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
 
@@ -520,13 +530,7 @@ public class MyBatisGeneratorConfigurationParser {
         Properties attributes = parseAttributes(node);
         String targetPackage = attributes.getProperty("targetPackage"); //$NON-NLS-1$
         String targetProject = attributes.getProperty("targetProject"); //$NON-NLS-1$
-
-        if(path!=null &&  path.indexOf("gengrate")>0){
-        	//F:\dev\hbc\svn\trade\trunk\trade-biz\src\main\java
-        	//F:\dev\hbc\svn\trade\trunk\trade-biz\gengrate\tradeconfig.xml
-        	
-        	targetProject = path.substring(0, path.indexOf("gengrate"))+File.separator+"src"+File.separator+"main"+File.separator+"java";
-        }
+        targetProject = getTargetPath(path,targetProject);
         javaModelGeneratorConfiguration.setTargetPackage(targetPackage);
         javaModelGeneratorConfiguration.setTargetProject(targetProject);
 
@@ -544,7 +548,7 @@ public class MyBatisGeneratorConfigurationParser {
         }
     }
 
-    private void parseJavaClientGenerator(Context context, Node node) {
+    private void parseJavaClientGenerator(Context context, Node node,String path) {
         JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
 
         context.setJavaClientGeneratorConfiguration(javaClientGeneratorConfiguration);
@@ -553,6 +557,7 @@ public class MyBatisGeneratorConfigurationParser {
         String type = attributes.getProperty("type"); //$NON-NLS-1$
         String targetPackage = attributes.getProperty("targetPackage"); //$NON-NLS-1$
         String targetProject = attributes.getProperty("targetProject"); //$NON-NLS-1$
+        targetProject = getTargetPath(path,targetProject);
         String implementationPackage = attributes
                 .getProperty("implementationPackage"); //$NON-NLS-1$
 
